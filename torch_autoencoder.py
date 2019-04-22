@@ -90,6 +90,7 @@ class TorchAutoencoder(TorchModelBase):
                     iteration, self.max_iter, err))
         # Hidden representations:
         with torch.no_grad():
+            self.model.to('cpu')
             H = self.model[1](self.model[0](X_tensor))
             return self.convert_output(H, X)
 
@@ -109,6 +110,7 @@ class TorchAutoencoder(TorchModelBase):
         self.model.eval()
         with torch.no_grad():
             X_tensor = self.convert_input_to_tensor(X)
+            self.model.to('cpu')
             X_pred = self.model(X_tensor)
             return self.convert_output(X_pred, X)
 
@@ -116,7 +118,6 @@ class TorchAutoencoder(TorchModelBase):
         if isinstance(X, pd.DataFrame):
             X = X.values
         X = torch.tensor(X, dtype=torch.float)
-        X = X.to(self.device)
         return X
 
     @staticmethod
